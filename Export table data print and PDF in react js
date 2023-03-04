@@ -1,0 +1,86 @@
+
+import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+// npm install react-to-print (please install)
+import { useReactToPrint } from "react-to-print";
+
+function Userlisting()
+{
+    const conponentPDF= useRef();
+    const [userData, setUserdata]= useState([]);
+
+    useEffect( ()=>{
+        const registerUserdata= async()=>{
+         axios.get("http://localhost:7000/api/registeruserdata")  
+         .then(res=>setUserdata(res.data) )
+         .catch(error=>console.log(error)); 
+
+        }
+        registerUserdata();
+    },[]);
+
+    const generatePDF= useReactToPrint({
+        content: ()=>conponentPDF.current,
+        documentTitle:"Userdata",
+        onAfterPrint:()=>alert("Data saved in PDF")
+    });
+       
+    return(
+        <React.Fragment>
+            <div className="container">
+                <div className="row">
+                    <div className="col-md-12">
+                    <h5 className="mt-2">User List</h5> 
+                      
+                    <div className="d-grid d-md-flex justify-content-md-end mb-3">
+                    <Link to="/userregistration" className="btn btn-success">Add New User</Link>                       
+                    </div> 
+                   <div ref={conponentPDF} style={{width:'100%'}}>
+                    <table className="table table-bordered" >
+                        <thead className="bg-light">
+                           <tr>
+                            <th>Sr. No</th>
+                            <th>Name</th>
+                            <th>User Name</th>
+                            <th>Email</th>
+                            <th>Phone No</th>
+                            <th>Gender</th>
+                            <th>Country</th>
+                            <th>State</th>
+                            <th>Address1</th>
+                            <th>Action</th>
+                            </tr> 
+                        </thead>
+                        <tbody>
+                            {
+                                userData.map( (uData, index)=>(
+                                 <tr key={index}>
+                                <td>{index+1}</td>
+                                <td>{uData.name}</td>
+                                <td>{uData.username}</td>
+                                <td>{uData.email}</td>
+                                <td>{uData.phoneno}</td>
+                                <td>{uData.gender}</td>
+                                <td>{uData.countryname}</td>
+                                <td>{uData.state_name}</td>
+                                <td>{uData.address1}</td>
+                                <td>
+                                    <Link to="/userEdit" className="btn btn-success mx-2">Edit</Link>
+                                    <Link to="/userDelete" className="btn btn-danger">Delete</Link>
+                                </td>
+                            </tr>
+                            )) }
+                        </tbody>                        
+                    </table>         
+                    </div>
+                    <div className="d-grid d-md-flex justify-content-md-end mb-3">
+                    <button className="btn btn-success" onClick={ generatePDF}>PDF</button>                       
+                    </div> 
+                    </div>
+                </div>
+            </div>           
+        </React.Fragment>
+    );
+}
+export default Userlisting;
