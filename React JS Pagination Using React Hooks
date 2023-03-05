@@ -1,0 +1,60 @@
+import React, { useState } from "react";
+import Apidata from '../Apidata.json';
+// npm install react-paginate (please install)
+import ReactPaginate from 'react-paginate';
+
+function Pagination()
+{
+  const [postdata,setPostdata]= useState(Apidata.slice(0,100));
+  const [pagenumber, setPagenumber]= useState(0);
+  const perpage=10;
+  const pageclick= pagenumber*perpage;
+  const countpage= Math.ceil(postdata.length/perpage);
+ 
+  const changePage=({selected})=>{
+    setPagenumber(selected);
+  }
+    return(
+        <React.Fragment>
+            <div className="container">
+                <div className="row">
+                    <div className="col-md-12">
+                    <h5 className="mt-2">Pagination</h5>                  
+                    <table className="table table-bordered" >
+                        <thead className="bg-light">
+                           <tr>                            
+                            <th>Sr. No</th>
+                            <th>Post Title</th>   
+                            <th>Body Contect</th>                
+                           </tr> 
+                        </thead>
+                        <tbody>
+                          { postdata.slice(pageclick, pageclick + perpage).map((datapost,index)=>(
+                            <tr key={index}>
+                            <td>{ datapost.id} </td>
+                           <td>{ datapost.title} </td>
+                           <td>{datapost.body} </td>
+                           </tr> 
+                             ))}
+                         </tbody>                        
+                    </table>       
+
+                      <ReactPaginate 
+                      previousLable={"Previous"}
+                      nextLable={"Next"}
+                      pageCount= { countpage}
+                      onPageChange={ changePage}
+                      containerClassName={"paginationBttns"}
+                      previousLinkClassName={"previousBttn"}
+                      nextLinkClassName={"nextBttn"}
+                      activeClassName={"paginationActive"}
+                      disabledClassName={"paginationDisabled"}
+                    />   
+                  </div>
+                </div>
+            </div>
+           
+        </React.Fragment>
+    );
+}
+export default Pagination;
